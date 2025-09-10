@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://<ton-user>.github.io/simloc-site/sitemap.xml
