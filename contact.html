@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Contact — SimLoc</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="index.html">SimLoc</a>
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+  <nav class="menu" data-menu>
+    <a href="services.html">Services</a>
+    <a href="about.html">À propos</a>
+    <a class="btn active" href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main class="content">
+  <h1>Contact</h1>
+  <p>Envoi par e-mail via le client de messagerie.</p>
+
+  <form class="form" action="mailto:contact@exemple.com" method="post" enctype="text/plain">
+    <label>Nom
+      <input required name="nom" type="text" autocomplete="name">
+    </label>
+    <label>Email
+      <input required name="email" type="email" autocomplete="email">
+    </label>
+    <label>Message
+      <textarea required name="message" rows="6"></textarea>
+    </label>
+    <button type="submit" class="btn">Envoyer</button>
+  </form>
+
+  <section class="info">
+    <h3>Informations</h3>
+    <p>Adresse, horaires, téléphone. Ajouter données réelles.</p>
+  </section>
+</main>
+
+<footer class="footer">
+  <div>© <span id="year"></span> SimLoc</div>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">À propos</a>
+    <a class="active" href="contact.html">Contact</a>
+  </nav>
+</footer>
+<script src="script.js" defer></script>
+</body>
+</html>
