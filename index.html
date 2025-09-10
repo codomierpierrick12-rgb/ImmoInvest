@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>SimLoc — Location simple, sans détour</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="SimLoc. Site vitrine clair, rapide, sans e-commerce. Présentation, services, contact.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="styles.css" as="style">
+  <link rel="stylesheet" href="styles.css">
+  <meta property="og:title" content="SimLoc — Location simple, sans détour">
+  <meta property="og:description" content="Vitrine rapide. Services et contact.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://<ton-user>.github.io/simloc-site/">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="index.html">SimLoc</a>
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+  <nav class="menu" data-menu>
+    <a href="services.html">Services</a>
+    <a href="about.html">À propos</a>
+    <a class="btn" href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Location simple, sans détour</h1>
+      <p>Site vitrine minimaliste. Contrôle total. Aucune vente en ligne.</p>
+      <div class="cta">
+        <a class="btn" href="services.html">Voir les services</a>
+        <a class="btn ghost" href="contact.html">Demander un devis</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid features">
+    <article>
+      <h3>Rapide</h3>
+      <p>Pages statiques ultra-légères servies par GitHub Pages.</p>
+    </article>
+    <article>
+      <h3>Clair</h3>
+      <p>Structure directe : accueil, services, à propos, contact.</p>
+    </article>
+    <article>
+      <h3>Flexible</h3>
+      <p>Code modifiable intégralement. Pas de verrou.</p>
+    </article>
+  </section>
+
+  <section class="cards">
+    <article class="card">
+      <h4>Vitrine</h4>
+      <p>Présente l’offre, les garanties et le périmètre.</p>
+      <a href="services.html" class="link">Détails</a>
+    </article>
+    <article class="card">
+      <h4>Devis</h4>
+      <p>Formulaire simple. Envoi par e-mail client.</p>
+      <a href="contact.html" class="link">Ouvrir</a>
+    </article>
+    <article class="card">
+      <h4>Entreprise</h4>
+      <p>Historique, équipe, engagements.</p>
+      <a href="about.html" class="link">Lire</a>
+    </article>
+  </section>
+</main>
+
+<footer class="footer">
+  <div>© <span id="year"></span> SimLoc</div>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">À propos</a>
+    <a href="contact.html">Contact</a>
+    <a href="robots.txt">Robots</a>
+    <a href="sitemap.xml">Sitemap</a>
+  </nav>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>
