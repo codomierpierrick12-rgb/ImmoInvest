@@ -1,0 +1,6 @@
+git init
+git remote add origin https://github.com/<ton-user>/simloc-site.git
+git add .
+git commit -m "Site vitrine SimLoc — initial"
+git branch -M main
+git push -u origin main
