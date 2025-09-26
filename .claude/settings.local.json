@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/powershell/create-new-feature.ps1 -Json \"\")",
+      "Bash(powershell:*)",
+      "Bash(npm run test:contracts:*)",
+      "Bash(npm run test:calculations:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run type-check:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

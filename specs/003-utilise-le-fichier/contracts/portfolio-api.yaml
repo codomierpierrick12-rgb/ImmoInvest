@@ -1,0 +1,637 @@
+openapi: 3.0.3
+info:
+  title: Stoneverse Portfolio API
+  description: Real Estate Portfolio Management API
+  version: 1.0.0
+  contact:
+    name: Stoneverse API Support
+    email: support@stoneverse.com
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+components:
+  schemas:
+    Portfolio:
+      type: object
+      required:
+        - id
+        - name
+        - base_currency
+        - baseline_date
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique portfolio identifier
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Portfolio display name
+        base_currency:
+          type: string
+          enum: [EUR, USD, GBP, CHF]
+          description: Base currency for calculations
+        baseline_date:
+          type: string
+          format: date
+          description: Reference date for portfolio analysis
+        sharing_settings:
+          type: object
+          properties:
+            is_shared:
+              type: boolean
+            shared_users:
+              type: array
+              items:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    format: uuid
+                  permission:
+                    type: string
+                    enum: [read, comment, edit]
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Property:
+      type: object
+      required:
+        - id
+        - legal_entity_id
+        - address
+        - city
+        - acquisition_price
+        - acquisition_date
+        - current_value
+      properties:
+        id:
+          type: string
+          format: uuid
+        legal_entity_id:
+          type: string
+          format: uuid
+        address:
+          type: string
+          minLength: 1
+          maxLength: 500
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        country:
+          type: string
+          default: FR
+          maxLength: 3
+        acquisition_price:
+          type: number
+          minimum: 0
+          multipleOf: 0.01
+        acquisition_date:
+          type: string
+          format: date
+        acquisition_costs:
+          type: object
+          properties:
+            notary_fees:
+              type: number
+              minimum: 0
+            agency_fees:
+              type: number
+              minimum: 0
+            renovation_costs:
+              type: number
+              minimum: 0
+        current_value:
+          type: number
+          minimum: 0
+          multipleOf: 0.01
+        valuation_date:
+          type: string
+          format: date
+        property_type:
+          type: string
+          enum: [apartment, house, commercial, parking, land]
+        surface_area:
+          type: number
+          minimum: 0
+        rental_yield_target:
+          type: number
+          minimum: 0
+          maximum: 50
+        status:
+          type: string
+          enum: [active, sold, under_renovation]
+          default: active
+
+    Scenario:
+      type: object
+      required:
+        - id
+        - portfolio_id
+        - name
+        - scenario_type
+        - base_date
+      properties:
+        id:
+          type: string
+          format: uuid
+        portfolio_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        scenario_type:
+          type: string
+          enum: [acquisition, disposal, refinancing, mixed]
+        base_date:
+          type: string
+          format: date
+        projection_years:
+          type: integer
+          minimum: 1
+          maximum: 30
+          default: 10
+        description:
+          type: string
+          maxLength: 1000
+        assumptions:
+          type: object
+          properties:
+            market_growth_rate:
+              type: number
+              minimum: -10
+              maximum: 20
+            inflation_rate:
+              type: number
+              minimum: 0
+              maximum: 10
+            interest_rate_evolution:
+              type: number
+              minimum: -5
+              maximum: 15
+        status:
+          type: string
+          enum: [draft, active, archived]
+          default: draft
+
+    KPISnapshot:
+      type: object
+      properties:
+        portfolio_id:
+          type: string
+          format: uuid
+        calculation_date:
+          type: string
+          format: date
+        total_property_value:
+          type: number
+          minimum: 0
+        total_debt:
+          type: number
+          minimum: 0
+        net_worth:
+          type: number
+        ltv_ratio:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Loan-to-Value ratio as percentage
+        dscr_ratio:
+          type: number
+          minimum: 0
+          description: Debt Service Coverage Ratio
+        monthly_cashflow:
+          type: number
+          description: Net monthly cash flow
+        annual_roi:
+          type: number
+          description: Return on Investment as percentage
+        tax_liability:
+          type: number
+          description: Annual tax liability
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_ERROR, NOT_FOUND, UNAUTHORIZED, FORBIDDEN, INTERNAL_ERROR]
+        message:
+          type: string
+        details:
+          type: object
+
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
+paths:
+  /portfolios:
+    get:
+      summary: List user portfolios
+      description: Retrieve all portfolios accessible to the current user
+      parameters:
+        - name: include_shared
+          in: query
+          description: Include portfolios shared with the user
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Successfully retrieved portfolios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portfolios:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Portfolio'
+                  total:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Create new portfolio
+      description: Create a new portfolio for the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - base_currency
+                - baseline_date
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                base_currency:
+                  type: string
+                  enum: [EUR, USD, GBP, CHF]
+                baseline_date:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Portfolio created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /portfolios/{portfolioId}:
+    parameters:
+      - name: portfolioId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: Get portfolio details
+      description: Retrieve detailed information about a specific portfolio
+      responses:
+        '200':
+          description: Successfully retrieved portfolio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      summary: Update portfolio
+      description: Update portfolio information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                sharing_settings:
+                  type: object
+      responses:
+        '200':
+          description: Portfolio updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    delete:
+      summary: Delete portfolio
+      description: Delete a portfolio and all associated data
+      responses:
+        '204':
+          description: Portfolio deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /portfolios/{portfolioId}/properties:
+    parameters:
+      - name: portfolioId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: List portfolio properties
+      description: Retrieve all properties in a portfolio
+      parameters:
+        - name: status
+          in: query
+          description: Filter by property status
+          schema:
+            type: string
+            enum: [active, sold, under_renovation]
+        - name: legal_entity_id
+          in: query
+          description: Filter by legal entity
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully retrieved properties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  properties:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Property'
+                  total:
+                    type: integer
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Add property to portfolio
+      description: Create a new property in the portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - legal_entity_id
+                - address
+                - city
+                - acquisition_price
+                - acquisition_date
+                - current_value
+              properties:
+                legal_entity_id:
+                  type: string
+                  format: uuid
+                address:
+                  type: string
+                city:
+                  type: string
+                acquisition_price:
+                  type: number
+                  minimum: 0
+                acquisition_date:
+                  type: string
+                  format: date
+                current_value:
+                  type: number
+                  minimum: 0
+                property_type:
+                  type: string
+                  enum: [apartment, house, commercial, parking, land]
+                rental_yield_target:
+                  type: number
+                  minimum: 0
+                  maximum: 50
+      responses:
+        '201':
+          description: Property created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /portfolios/{portfolioId}/scenarios:
+    parameters:
+      - name: portfolioId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: List portfolio scenarios
+      description: Retrieve all scenarios for a portfolio
+      parameters:
+        - name: status
+          in: query
+          description: Filter by scenario status
+          schema:
+            type: string
+            enum: [draft, active, archived]
+        - name: scenario_type
+          in: query
+          description: Filter by scenario type
+          schema:
+            type: string
+            enum: [acquisition, disposal, refinancing, mixed]
+      responses:
+        '200':
+          description: Successfully retrieved scenarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scenarios:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Scenario'
+                  total:
+                    type: integer
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Create new scenario
+      description: Create a new what-if scenario for the portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - scenario_type
+                - base_date
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                scenario_type:
+                  type: string
+                  enum: [acquisition, disposal, refinancing, mixed]
+                base_date:
+                  type: string
+                  format: date
+                projection_years:
+                  type: integer
+                  minimum: 1
+                  maximum: 30
+                description:
+                  type: string
+                  maxLength: 1000
+      responses:
+        '201':
+          description: Scenario created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /portfolios/{portfolioId}/kpi:
+    parameters:
+      - name: portfolioId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: Get portfolio KPIs
+      description: Retrieve current key performance indicators for the portfolio
+      parameters:
+        - name: as_of_date
+          in: query
+          description: Calculate KPIs as of specific date (default: today)
+          schema:
+            type: string
+            format: date
+        - name: compare_to_date
+          in: query
+          description: Compare with KPIs from another date
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Successfully retrieved KPIs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current:
+                    $ref: '#/components/schemas/KPISnapshot'
+                  comparison:
+                    $ref: '#/components/schemas/KPISnapshot'
+                  trends:
+                    type: object
+                    properties:
+                      net_worth_trend:
+                        type: string
+                        enum: [increasing, decreasing, stable]
+                      cashflow_trend:
+                        type: string
+                        enum: [improving, deteriorating, stable]
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
