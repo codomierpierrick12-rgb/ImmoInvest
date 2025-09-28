@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Stoneverse - Own your property universe',
-  description: 'Professional real estate portfolio management platform with French tax optimization, KPI tracking, and investment analysis tools. Simulate. Compare. Decide.',
-  keywords: 'real estate, portfolio management, LMNP, SCI IS, French tax optimization, property investment, Stoneverse',
+  title: 'Stoneverse - Maîtrisez votre univers immobilier',
+  description: 'Plateforme professionnelle de gestion de portefeuille immobilier avec optimisation fiscale française, suivi des KPI et outils d\'analyse d\'investissement. Simulez. Comparez. Décidez.',
+  keywords: 'immobilier, gestion de portefeuille, LMNP, SCI IS, optimisation fiscale française, investissement immobilier, Stoneverse',
 };
 
 export default function RootLayout({

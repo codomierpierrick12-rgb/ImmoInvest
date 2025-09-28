@@ -84,7 +84,7 @@ function KPICard({ title, value, subtitle, trend, icon, variant = 'default' }: K
             >
               {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%
             </span>
-            <span className="text-xs text-gray-500 ml-1">vs last period</span>
+            <span className="text-xs text-gray-500 ml-1">vs période précédente</span>
           </div>
         )}
       </CardContent>
@@ -106,13 +106,13 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
         const response = await fetch(`/api/v1/portfolios/${portfolioId}/kpi`);
 
         if (!response.ok) {
-          throw new Error('Failed to fetch KPI data');
+          throw new Error('Échec du chargement des données KPI');
         }
 
         const data = await response.json();
         setKpiData(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : 'Une erreur est survenue');
       } finally {
         setLoading(false);
       }
@@ -166,7 +166,7 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
       <Card className={cn('border-red-200 bg-red-50', className)}>
         <CardContent>
           <div className="text-red-600 text-center py-4">
-            Error loading KPI data: {error}
+            Erreur lors du chargement des données KPI: {error}
           </div>
         </CardContent>
       </Card>
@@ -178,7 +178,7 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
       <Card className={cn('border-gray-200', className)}>
         <CardContent>
           <div className="text-gray-500 text-center py-4">
-            No KPI data available
+            Aucune donnée KPI disponible
           </div>
         </CardContent>
       </Card>
@@ -210,9 +210,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
     <div className={cn('grid gap-4 md:grid-cols-2 lg:grid-cols-4', className)}>
       {/* Total Portfolio Value */}
       <KPICard
-        title="Portfolio Value"
+        title="Valeur du Portefeuille"
         value={formatLargeNumber(portfolio_kpi.total_property_value)}
-        subtitle={`${portfolio_kpi.active_properties} properties`}
+        subtitle={`${portfolio_kpi.active_properties} biens`}
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
@@ -223,9 +223,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* Net Worth */}
       <KPICard
-        title="Net Worth"
+        title="Patrimoine Net"
         value={formatLargeNumber(portfolio_kpi.net_worth)}
-        subtitle={`Debt: ${formatLargeNumber(portfolio_kpi.total_debt)}`}
+        subtitle={`Dette: ${formatLargeNumber(portfolio_kpi.total_debt)}`}
         variant={portfolio_kpi.net_worth > 0 ? 'success' : 'danger'}
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,9 +236,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* LTV Ratio */}
       <KPICard
-        title={<LTVTooltip scope="portfolio">LTV Ratio</LTVTooltip>}
+        title={<LTVTooltip scope="portfolio">Ratio LTV</LTVTooltip>}
         value={formatPercentage(portfolio_kpi.portfolio_ltv)}
-        subtitle="Loan-to-Value"
+        subtitle="Prêt sur Valeur"
         variant={getLTVVariant(portfolio_kpi.portfolio_ltv)}
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,9 +249,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* Monthly Cash Flow */}
       <KPICard
-        title="Monthly Cash Flow"
+        title="Flux de Trésorerie Mensuel"
         value={formatCurrency(portfolio_kpi.total_monthly_cashflow)}
-        subtitle={`Annual: ${formatCurrency(portfolio_kpi.total_annual_cashflow)}`}
+        subtitle={`Annuel: ${formatCurrency(portfolio_kpi.total_annual_cashflow)}`}
         variant={getCashFlowVariant(portfolio_kpi.total_monthly_cashflow)}
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,9 +262,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* Gross Yield */}
       <KPICard
-        title="Gross Yield"
+        title="Rendement Brut"
         value={formatPercentage(portfolio_kpi.portfolio_gross_yield)}
-        subtitle="Before expenses"
+        subtitle="Avant charges"
         variant={getYieldVariant(portfolio_kpi.portfolio_gross_yield)}
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -275,9 +275,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* Net Yield */}
       <KPICard
-        title="Net Yield"
+        title="Rendement Net"
         value={formatPercentage(portfolio_kpi.portfolio_net_yield)}
-        subtitle="After expenses"
+        subtitle="Après charges"
         variant={getYieldVariant(portfolio_kpi.portfolio_net_yield)}
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,9 +288,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* Capital Gain */}
       <KPICard
-        title="Capital Gain"
+        title="Plus-value"
         value={formatPercentage(portfolio_kpi.portfolio_capital_gain_percentage)}
-        subtitle="Unrealized gain"
+        subtitle="Plus-value latente"
         variant={portfolio_kpi.portfolio_capital_gain_percentage > 0 ? 'success' : 'danger'}
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -301,9 +301,9 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* Property Count */}
       <KPICard
-        title="Properties"
+        title="Biens"
         value={portfolio_kpi.active_properties}
-        subtitle="Active properties"
+        subtitle="Biens actifs"
         icon={
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />

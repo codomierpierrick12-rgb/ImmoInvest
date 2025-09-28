@@ -36,13 +36,13 @@ export default function PropertyList({
         const response = await fetch(`/api/v1/portfolios/${portfolioId}/properties`);
 
         if (!response.ok) {
-          throw new Error('Failed to fetch properties');
+          throw new Error('Échec du chargement des biens');
         }
 
         const data = await response.json();
         setProperties(data.properties || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : 'Une erreur est survenue');
       } finally {
         setLoading(false);
       }
@@ -72,7 +72,7 @@ export default function PropertyList({
         setProperties(prev => prev.filter(p => p.id !== property.id));
         onDeleteProperty?.(property);
       } else {
-        throw new Error('Failed to delete property');
+        throw new Error('Échec de la suppression du bien');
       }
     } catch (error) {
       console.error('Error deleting property:', error);
@@ -123,12 +123,12 @@ export default function PropertyList({
     return (
       <Card className={cn('border-red-200 bg-red-50', className)}>
         <CardContent>
-          <div className="text-red-600 mb-4">Error: {error}</div>
+          <div className="text-red-600 mb-4">Erreur: {error}</div>
           <Button
             variant="outline"
             onClick={() => window.location.reload()}
           >
-            Retry
+            Réessayer
           </Button>
         </CardContent>
       </Card>
@@ -139,10 +139,10 @@ export default function PropertyList({
     return (
       <Card className={cn('text-center py-12', className)}>
         <CardContent>
-          <div className="text-gray-500 mb-4">No properties found</div>
+          <div className="text-gray-500 mb-4">Aucun bien trouvé</div>
           {onAddProperty && (
             <Button onClick={onAddProperty}>
-              Add Your First Property
+              Ajouter votre premier bien
             </Button>
           )}
         </CardContent>
@@ -154,11 +154,11 @@ export default function PropertyList({
     <div className={cn('space-y-4', className)}>
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold text-gray-900">
-          Properties ({properties.length})
+          Biens ({properties.length})
         </h2>
         {onAddProperty && (
           <Button onClick={onAddProperty} size="sm">
-            Add Property
+            Ajouter un bien
           </Button>
         )}
       </div>
@@ -239,7 +239,7 @@ export default function PropertyList({
                 {/* Financial Information */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Current Value</span>
+                    <span className="text-sm text-gray-600">Valeur Actuelle</span>
                     <span className="text-sm font-semibold">
                       {formatCurrency(property.current_value)}
                     </span>
@@ -255,7 +255,7 @@ export default function PropertyList({
                   {/* Capital Gain */}
                   {property.current_value !== property.acquisition_price && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Gain</span>
+                      <span className="text-sm text-gray-600">Plus-value</span>
                       <span
                         className={cn(
                           'text-sm font-medium',
@@ -279,19 +279,19 @@ export default function PropertyList({
                   )}
                   {property.number_of_rooms && (
                     <div className="text-xs text-gray-600">
-                      <span className="font-medium">{property.number_of_rooms} rooms</span>
+                      <span className="font-medium">{property.number_of_rooms} pièces</span>
                     </div>
                   )}
                   {property.rental_type && (
                     <div className="text-xs text-gray-600 col-span-2">
-                      {property.rental_type === 'furnished' ? 'Furnished' : 'Unfurnished'}
+                      {property.rental_type === 'furnished' ? 'Meublé' : 'Non meublé'}
                     </div>
                   )}
                 </div>
 
                 {/* Acquisition Date */}
                 <div className="text-xs text-gray-500 pt-2 border-t border-gray-100">
-                  Acquired: {new Date(property.acquisition_date).toLocaleDateString('fr-FR')}
+                  Acquis le: {new Date(property.acquisition_date).toLocaleDateString('fr-FR')}
                 </div>
               </div>
             </CardContent>

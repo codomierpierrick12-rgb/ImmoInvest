@@ -80,7 +80,7 @@ function TransactionForm({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create transaction');
+        throw new Error('Échec de la création de la transaction');
       }
 
       const newTransaction = await response.json();
@@ -231,7 +231,7 @@ export default function TransactionManager({
       const response = await fetch(`/api/v1/portfolios/${portfolioId}/transactions`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch transactions');
+        throw new Error('Échec du chargement des transactions');
       }
 
       const data = await response.json();
