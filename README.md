@@ -1,13 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stoneverse - Plateforme de Gestion Immobilière
 
-## Getting Started
+> Own your property universe. Simulate. Compare. Decide.
 
-First, run the development server:
+Stoneverse est une plateforme moderne de gestion de patrimoine immobilier développée avec Next.js 15, React 19 et Supabase.
+
+## 🚀 Fonctionnalités
+
+### 📊 Tableau de Bord Complet
+- **Vue d'ensemble** : KPIs financiers principaux et avancés
+- **Gestion des biens** : Ajout, modification, suppression de propriétés
+- **Entités légales** : Gestion LMNP, LMP, SCI IR/IS, SARL, SAS
+- **Transactions** : Suivi des loyers, dépenses, remboursements
+- **Comparateur** : Analyse comparative des investissements
+- **Optimisation fiscale** : Simulation et recommandations
+- **Alertes** : Notifications automatiques
+- **Rapports** : Analyses détaillées et export
+
+### 💰 KPIs Financiers Avancés
+- **IRR** (Taux de Rendement Interne)
+- **DSCR** (Debt Service Coverage Ratio)
+- **LTV** (Loan-to-Value)
+- **Cap Rate** (Taux de Capitalisation)
+- **Cash-on-Cash Return**
+- **Equity Multiple**
+- **Yield on Cost**
+- **Break Even Ratio**
+- Et plus encore...
+
+## 🛠️ Technologies
+
+- **Frontend** : Next.js 15.5.4, React 19.1.0, TypeScript 5
+- **Styling** : TailwindCSS 4, Radix UI
+- **Backend** : Supabase 2.58.0 (PostgreSQL, Auth, RLS)
+- **Déploiement** : Vercel
+- **Package Manager** : npm
+
+## 📦 Installation
+
+### Prérequis
+- Node.js 20+
+- npm ou yarn
+- Compte Supabase (optionnel pour le mode démo)
+
+### Installation locale
 
 ```bash
+# Cloner le repository
+git clone https://github.com/votre-username/immo-invest-app.git
+cd immo-invest-app
+
+# Installer les dépendances
+npm install
+
+# Copier les variables d'environnement
+cp .env.example .env.local
+
+# Démarrer en mode développement
 npm run dev
-# or
-yarn dev
 # or
 pnpm dev
 # or

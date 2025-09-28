@@ -36,7 +36,35 @@ export async function GET(
       format: searchParams.get('format'),
     });
 
-    // Get authenticated user
+    // For demo portfolios, return demo data
+    if (portfolioId.startsWith('portfolio-')) {
+      const demoKPIs = {
+        portfolio_id: portfolioId,
+        total_property_value: 1435000,
+        total_loan_balance: 1235000,
+        monthly_rental_income: 8500,
+        monthly_expenses: 6650,
+        net_monthly_cash_flow: 1850,
+        total_equity: 200000,
+        portfolio_yield: 0.071,
+        occupancy_rate: 0.94,
+        calculated_at: new Date().toISOString(),
+      };
+
+      return NextResponse.json({
+        portfolio_kpi: demoKPIs,
+        properties_kpi: [],
+        monthly_performance: [],
+        summary: {
+          total_properties: 5,
+          total_value: demoKPIs.total_property_value,
+          total_equity: demoKPIs.total_equity,
+          monthly_cash_flow: demoKPIs.net_monthly_cash_flow,
+        }
+      });
+    }
+
+    // Get authenticated user for real portfolios
     const user = await serverHelpers.getServerUser();
     if (!user) {
       return NextResponse.json(
@@ -164,7 +192,11 @@ export async function GET(
 
       default:
         // JSON format
-        const response: any = {
+        const response: {
+          portfolio_kpi: typeof portfolioKPI;
+          property_kpis?: typeof propertyKPIs;
+          monthly_performance?: unknown[];
+        } = {
           portfolio_kpi: portfolioKPI,
         };
 
@@ -196,7 +228,32 @@ export async function GET(
   }
 }
 
-function handleCSVResponse(portfolioKPI: any, propertyKPIs: any[]): NextResponse {
+function handleCSVResponse(
+  portfolioKPI: {
+    portfolio_name: string;
+    portfolio_id: string;
+    total_property_value: number;
+    total_acquisition_cost: number;
+    total_debt: number;
+    portfolio_ltv: number;
+    total_annual_cashflow: number;
+    portfolio_gross_yield: number;
+    portfolio_net_yield: number;
+    portfolio_capital_gain_percentage: number;
+  },
+  propertyKPIs: Array<{
+    address: string;
+    city: string;
+    current_value: number;
+    acquisition_price: number;
+    total_debt: number;
+    ltv_ratio: number;
+    annual_cashflow: number;
+    gross_rental_yield: number;
+    net_rental_yield: number;
+    capital_gain_percentage: number;
+  }>
+): NextResponse {
   // Generate CSV content
   const csvHeaders = [
     'Type',

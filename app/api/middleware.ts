@@ -5,8 +5,8 @@ import { serverHelpers } from '@/lib/supabase/server';
  * Authentication middleware for API routes
  * Checks if user is authenticated and adds user context to request
  */
-export async function authenticateRequest(request: NextRequest): Promise<{
-  user: any | null;
+export async function authenticateRequest(_request: NextRequest): Promise<{
+  user: { id: string; email?: string } | null;
   error?: string;
   status?: number;
 }> {
@@ -41,7 +41,7 @@ export async function checkPortfolioAccess(
   userId: string
 ): Promise<{
   hasAccess: boolean;
-  portfolio?: any;
+  portfolio?: { id: string; name: string; user_id: string };
   error?: string;
   status?: number;
 }> {
@@ -86,8 +86,8 @@ export async function checkPropertyAccess(
   userId: string
 ): Promise<{
   hasAccess: boolean;
-  property?: any;
-  portfolio?: any;
+  property?: { id: string; address: string; portfolios?: { id: string; user_id: string; name: string } };
+  portfolio?: { id: string; user_id: string; name: string };
   error?: string;
   status?: number;
 }> {
@@ -120,7 +120,7 @@ export async function checkPropertyAccess(
     return {
       hasAccess: true,
       property,
-      portfolio: (property as any).portfolios,
+      portfolio: property.portfolios,
     };
   } catch (error) {
     console.error('Property access check error:', error);
@@ -231,9 +231,9 @@ export function validateUUID(value: string, paramName: string = 'ID'): {
 export function createErrorResponse(
   message: string,
   status: number = 400,
-  details?: any
+  details?: unknown
 ): NextResponse {
-  const body: any = { error: message };
+  const body: { error: string; details?: unknown } = { error: message };
 
   if (details) {
     body.details = details;
@@ -246,11 +246,11 @@ export function createErrorResponse(
  * Success response helper
  */
 export function createSuccessResponse(
-  data: any,
+  data: unknown,
   message?: string,
   status: number = 200
 ): NextResponse {
-  const body: any = data;
+  const body: { message?: string } = typeof data === 'object' && data !== null ? { ...data as object } : { data };
 
   if (message) {
     body.message = message;

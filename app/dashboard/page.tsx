@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 import PortfolioDashboard from '@/components/portfolio/PortfolioDashboard';
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
 
   // Check if Supabase is configured
   const isSupabaseConfigured =
@@ -24,9 +24,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     checkUser();
-  }, []);
+  }, [checkUser]);
 
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     try {
       if (!isSupabaseConfigured || !supabase) {
         // Demo mode - Supabase not configured
@@ -61,7 +61,7 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isSupabaseConfigured, supabase, router]);
 
   const handleSignOut = async () => {
     if (supabase) {
