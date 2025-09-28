@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  skipTrailingSlashRedirect: true,
 };
 
 export default nextConfig;
