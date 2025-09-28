@@ -41,13 +41,15 @@ export async function GET(
       const demoKPIs = {
         portfolio_id: portfolioId,
         total_property_value: 1435000,
-        total_loan_balance: 1235000,
-        monthly_rental_income: 8500,
-        monthly_expenses: 6650,
-        net_monthly_cash_flow: 1850,
-        total_equity: 200000,
-        portfolio_yield: 0.071,
-        occupancy_rate: 0.94,
+        total_debt: 1050000,
+        net_worth: 385000,
+        portfolio_ltv: 73.2,
+        total_annual_cashflow: 22200,
+        total_monthly_cashflow: 1850,
+        portfolio_gross_yield: 7.1,
+        portfolio_net_yield: 5.8,
+        active_properties: 5,
+        portfolio_capital_gain_percentage: 12.5,
         calculated_at: new Date().toISOString(),
       };
 
@@ -58,8 +60,8 @@ export async function GET(
         summary: {
           total_properties: 5,
           total_value: demoKPIs.total_property_value,
-          total_equity: demoKPIs.total_equity,
-          monthly_cash_flow: demoKPIs.net_monthly_cash_flow,
+          total_equity: demoKPIs.net_worth,
+          monthly_cash_flow: demoKPIs.total_monthly_cashflow,
         }
       });
     }
