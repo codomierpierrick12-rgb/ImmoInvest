@@ -4,9 +4,9 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key"
+    "NEXT_PUBLIC_SUPABASE_URL": "https://elkyxxcbegcmpohhrsmw.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsa3l4eGNiZWdjbXBvaGhyc213Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5MDM2MDMsImV4cCI6MjA3NDQ3OTYwM30.6G5MEiWNwHc8jHPVwi44lMYM6OPwRN65a_DmiodlxlY",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsa3l4eGNiZWdjbXBvaGhyc213Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODkwMzYwMywiZXhwIjoyMDc0NDc5NjAzfQ.example-key-replace-with-real"
   },
   "functions": {
     "app/api/**": {
