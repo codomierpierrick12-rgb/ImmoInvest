@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LTVTooltip, DSCRTooltip } from '@/components/ui/TooltipMetric';
+import { LTVTooltip, DSCRTooltip } from '@/components/ui/tooltip-metric';
 import { cn } from '@/lib/utils';
 
 interface KPIData {
