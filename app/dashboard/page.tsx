@@ -22,10 +22,6 @@ export default function DashboardPage() {
   ) : null;
   const router = useRouter();
 
-  useEffect(() => {
-    checkUser();
-  }, [checkUser]);
-
   const checkUser = useCallback(async () => {
     try {
       if (!isSupabaseConfigured || !supabase) {
@@ -62,6 +58,10 @@ export default function DashboardPage() {
       setLoading(false);
     }
   }, [isSupabaseConfigured, supabase, router]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
 
   const handleSignOut = async () => {
     if (supabase) {
