@@ -1,0 +1,166 @@
+========================================
+Stoneverse - Branding & Tooltips
+========================================
+
+Fichier : 04-branding-tooltips.txt
+Contenu : Branding, Identité, Baseline, Elevator pitch, Messaging, Design tokens, Logo, Microcopy de marque, Intégration produit, Tooltips KPI
+
+-------------------------------------------------
+1) Branding – Contexte & objectif
+-------------------------------------------------
+Instaurer une identité claire et mémorable pour le produit de pilotage patrimonial & simulation immobilière.  
+Nom retenu : **Stoneverse** (premium, internationalisable).
+
+-------------------------------------------------
+2) Baselines (taglines)
+-------------------------------------------------
+✅ Retenue (EN) : **Own your property universe.**  
+Baseline produit : **Simulate. Compare. Decide.**
+
+-------------------------------------------------
+3) Elevator pitch (≤ 40 mots)
+-------------------------------------------------
+Stoneverse is the portfolio command center for property investors. Track assets, model taxes (LMNP/SCI IS), and run what-if scenarios for buys, sales, and refinements — so you always know the delta and own the outcome.
+
+-------------------------------------------------
+4) Messaging pillars
+-------------------------------------------------
+- **Portfolio Clarity** – Vue consolidée (valeur, dette, LTV, DSCR, CF net, impôts).  
+- **Scenario Intelligence** – Achats/ventes/refis, comparateur, sensibilités.  
+- **TaxReady** – LMNP réel, SCI à l’IS, plus-values, amortissements par composant.
+
+-------------------------------------------------
+5) Identité visuelle – Design tokens (MVP)
+-------------------------------------------------
+### Couleurs
+- --stone-900 #0F172A (texte principal)
+- --stone-800 #1F2937 (titres)
+- --primary-600 #2563EB (accent cobalt)
+- --primary-500 #3B82F6 (hover)
+- --success-600 #16A34A
+- --warning-600 #F59E0B
+- --danger-600 #DC2626
+- --bg #F8FAFC
+- --card #FFFFFF
+- --border #E2E8F0
+- --muted #F1F5F9
+
+Charts palette : cobalt, teal, indigo, amber, purple, rose (60/30/10).
+
+### Typographie
+- Inter (UI) avec tabular nums pour les KPI.
+- Titres alternatifs : Sora ou Manrope.
+
+### Iconographie
+- Ligne claire, épaisseur uniforme, grille 24px (style lucide-like).
+
+-------------------------------------------------
+6) Logo – Brief créatif
+-------------------------------------------------
+- **Wordmark** : “Stoneverse” en sans-serif géométrique, kerning resserré, capitalisation « Stoneverse ».
+- Variantes light/dark.
+- **Monogramme** : “S” monolinéaire formant un cube isométrique (brique) ou trame hexagonale (univers).
+- Jeu de négatif rappelant une pierre taillée.
+- Angles : rayons doux (12–16 px).
+- Assets à livrer : SVG (mono & couleur), PNG (1024/512/256/64), favicon 32, app icon 1024, fond clair/sombre.
+
+Do : garder le S lisible à 16 px, contrastes AA, marges ≥ grille 8 px.  
+Don’t : effets 3D lourds, dégradés complexes, ombres dures.
+
+-------------------------------------------------
+7) Microcopy de marque
+-------------------------------------------------
+- Ton clair, quantitatif, rassurant, sans jargon inutile.  
+- Verbes d’action : Simulate, Compare, Decide.  
+
+-------------------------------------------------
+8) Intégration produit (actions concrètes)
+-------------------------------------------------
+- Nom & entêtes : “Stoneverse” en header, sidebar, exports PDF.  
+- Baseline par défaut : **Simulate. Compare. Decide.**  
+- KPI tooltips : inclure définitions LTV/DSCR/CRD.  
+- Écran Auth : mot d’accueil « Welcome to Stoneverse ».  
+- Exports : watermark/entête « Stoneverse — Own your property universe. »  
+
+### Checklist Dev
+- Find/replace label app : “SimLoc+” → “Stoneverse”.  
+- Token primaire Tailwind : bleu cobalt (#2563EB).  
+- Fichiers : app/logo.svg, public/favicon.ico, public/icon-1024.png.  
+
+-------------------------------------------------
+9) Critères d’acceptation Branding
+-------------------------------------------------
+- **UI** : nom “Stoneverse” affiché en header/sidebar et sur les exports.  
+- **Dashboard** : tooltips KPI respectent microcopies de marque.  
+- **Mode sombre** : logomark reste lisible (contraste AA, outline si besoin).  
+
+-------------------------------------------------
+10) Tooltips – Contexte & objectif
+-------------------------------------------------
+Fournir des définitions brèves et uniformes des indicateurs financiers dans l’UI pour réduire l’ambiguïté et accélérer la décision.
+
+-------------------------------------------------
+11) Tooltips – Périmètre
+-------------------------------------------------
+- Emplacements : cartes KPI (Dashboard), colonnes de tables (Biens, Comparateur), fiches Bien, sheets Vente/Refi.  
+- Indicateurs couverts (Phase 1) : **LTV, DSCR, CRD**.  
+- Phase 2 (option) : **VAN@r, TRI (equity/projet), Cash net vendeur**.  
+
+-------------------------------------------------
+12) Tooltips – Fonctionnalités
+-------------------------------------------------
+- Icône info ⓘ ou suffixe souligné à côté du libellé.  
+- Desktop : hover + focus clavier.  
+- Mobile : tap long ≥300 ms, fermeture au 2e tap ou clic externe.  
+- Largeur max : 320 px, texte multiligne, thème clair/sombre.  
+
+-------------------------------------------------
+13) Tooltips – Microcopy (contenu)
+-------------------------------------------------
+- **LTV — Loan-to-Value**  
+  « Part de dette par rapport à la valeur de marché.  
+  Formule : LTV = Dette / Valeur. Plus c’est bas, plus c’est sûr. Seuil d’alerte : 85 %. »
+
+- **DSCR — Debt Service Coverage Ratio**  
+  « Capacité des flux d’exploitation à couvrir les mensualités de dette.  
+  Formule : DSCR = Cash-flow opérationnel / Service de la dette, avec CF op = loyers nets − charges − impôts d’exploitation (hors amortissements). Zone de confort ≥ 1,20. »
+
+- **CRD — Capital Restant Dû**  
+  « Montant de principal restant à rembourser à la date considérée. Sert au calcul de l’IRA (remb. anticipé), du cash net vendeur et du refinancement. »
+
+Règles de format :  
+- Montants en € fr-FR (espace fine).  
+- Pourcentages à 1 décimale.  
+
+-------------------------------------------------
+14) Tooltips – Règles de gestion
+-------------------------------------------------
+- Tooltip KPI portefeuille = calcul agrégé.  
+- Tooltip Bien = calcul par bien.  
+- Seuils (LTV 85 %, DSCR 1,20) paramétrables via Admin.  
+- Texte statique (Phase 1) → pas de données personnelles dynamiques.  
+
+-------------------------------------------------
+15) Tooltips – Accessibilité
+-------------------------------------------------
+- Navigable clavier (focus visible).  
+- Ouverture via Entrée/Espace, fermeture via Échap.  
+- aria-describedby sur libellé → contenu tooltip ; rôle = tooltip.  
+- Zone interactive min. 44×44 px (mobile).  
+
+-------------------------------------------------
+16) Tooltips – Contraintes techniques
+-------------------------------------------------
+- Composant unique : TooltipMetric  
+  props : metric = "LTV" | "DSCR" | "CRD", scope = "portfolio" | "property".  
+- Pas de recalcul bloquant.  
+- Rendu en portal (z-index élevé), debounce hover 150 ms.  
+- i18n ready, thème via design system.  
+
+-------------------------------------------------
+17) Tooltips – Critères d’acceptation
+-------------------------------------------------
+- Dashboard : Given hover sur LTV KPI, Then tooltip <150 ms avec définition+formule, close au mouseout/Échap.  
+- Table Biens : Given focus clavier DSCR, Then tooltip ouvert, fermeture Échap, focus conservé.  
+- Sheet Vente (mobile) : Given tap long sur CRD, Then tooltip ouvert, fermeture au tap externe.  
+- Admin : Given seuil DSCR modifié à 1,30, Then tooltip DSCR affiche 1,30.  

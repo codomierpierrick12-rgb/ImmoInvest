@@ -3,8 +3,11 @@ import { serverHelpers } from '@/lib/supabase/server';
 import { calculatePropertyKPIs, calculatePortfolioKPIs, calculateMonthlyPerformance } from '@/lib/calculations/kpi';
 import { z } from 'zod';
 
-// UUID validation schema
-const uuidSchema = z.string().uuid('Invalid portfolio ID format');
+// Portfolio ID validation schema (UUID or demo ID)
+const portfolioIdSchema = z.string().refine(
+  (id) => z.string().uuid().safeParse(id).success || id.startsWith('portfolio-'),
+  'Invalid portfolio ID format'
+);
 
 // Query parameters schema
 const querySchema = z.object({
@@ -16,11 +19,13 @@ const querySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
+    // Await params in Next.js 15
+    const { portfolioId: rawPortfolioId } = await params;
     // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    const portfolioId = portfolioIdSchema.parse(rawPortfolioId);
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);

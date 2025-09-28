@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { cn } from '@/lib/utils/cn';
+import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LTVTooltip, DSCRTooltip } from '@/components/ui/TooltipMetric';
+import { cn } from '@/lib/utils';
 
 interface KPIData {
   portfolio_kpi: {
@@ -26,7 +27,7 @@ interface KPICardsProps {
 }
 
 interface KPICardProps {
-  title: string;
+  title: string | React.ReactNode;
   value: string | number;
   subtitle?: string;
   trend?: {
@@ -235,7 +236,7 @@ export default function KPICards({ portfolioId, className, refreshTrigger }: KPI
 
       {/* LTV Ratio */}
       <KPICard
-        title="LTV Ratio"
+        title={<LTVTooltip scope="portfolio">LTV Ratio</LTVTooltip>}
         value={formatPercentage(portfolio_kpi.portfolio_ltv)}
         subtitle="Loan-to-Value"
         variant={getLTVVariant(portfolio_kpi.portfolio_ltv)}

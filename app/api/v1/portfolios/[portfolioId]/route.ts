@@ -8,11 +8,13 @@ const uuidSchema = z.string().uuid('Invalid portfolio ID format');
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
+    // Await params in Next.js 15
+    const { portfolioId: rawPortfolioId } = await params;
     // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    const portfolioId = uuidSchema.parse(rawPortfolioId);
 
     // Get authenticated user
     const user = await serverHelpers.getServerUser();
@@ -136,11 +138,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
+    // Await params in Next.js 15
+    const { portfolioId: rawPortfolioId } = await params;
     // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    const portfolioId = uuidSchema.parse(rawPortfolioId);
 
     // Get authenticated user
     const user = await serverHelpers.getServerUser();
@@ -215,11 +219,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
+    // Await params in Next.js 15
+    const { portfolioId: rawPortfolioId } = await params;
     // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    const portfolioId = uuidSchema.parse(rawPortfolioId);
 
     // Get authenticated user
     const user = await serverHelpers.getServerUser();

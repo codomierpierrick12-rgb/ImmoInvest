@@ -225,7 +225,7 @@ export function calculatePortfolioKPIs(
     portfolio_id: portfolioId,
     user_id: userId,
     portfolio_name: portfolioName,
-    base_currency: baseCurrency as any,
+    base_currency: baseCurrency as 'EUR' | 'USD' | 'GBP',
     baseline_date: baselineDate,
     total_properties: activeProperties,
     active_properties: activeProperties,

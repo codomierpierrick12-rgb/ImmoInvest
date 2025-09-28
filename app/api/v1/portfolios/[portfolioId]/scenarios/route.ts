@@ -19,11 +19,13 @@ const querySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
+    // Await params in Next.js 15
+    const { portfolioId: rawPortfolioId } = await params;
     // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    const portfolioId = uuidSchema.parse(rawPortfolioId);
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
@@ -159,11 +161,13 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
+    // Await params in Next.js 15
+    const { portfolioId: rawPortfolioId } = await params;
     // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    const portfolioId = uuidSchema.parse(rawPortfolioId);
 
     // Get authenticated user
     const user = await serverHelpers.getServerUser();

@@ -1,0 +1,192 @@
+========================================
+Stoneverse - Données & Exports
+========================================
+
+Fichier : 02-donnees-exports.txt
+Contenu : Modèle de données, Tableaux & exports, Annexes
+
+-------------------------------------------------
+9) Modèle de données (simplifié)
+-------------------------------------------------
+
+### Objet Bien
+Bien {
+  id,
+  entitéId,
+  nom,
+  adresse,
+  type,
+  surface,
+  bail {
+    loyer,
+    indexation_IRL,
+    date_anniversaire
+  },
+  vacance_cible%,
+  impayés%,
+  charges_std,
+  taxe_foncière,
+  capex_plan[],
+  régime_fiscal,
+  composants_amortissables[],
+  prêts[],
+  valorisation% | valeur_manuelle
+}
+
+### Objet Prêt
+Prêt {
+  id,
+  bienId,
+  type,                # amortissable | in fine
+  montant_initial,
+  taux,
+  durée,
+  différé,
+  assurance,
+  IRA%,
+  CRD_T0
+}
+
+### Objet ÉvénementMensuel
+ÉvénementMensuel {
+  id,
+  bienId,
+  période (YYYYMM),
+  loyer_encaisse,
+  vacance_jours,
+  charges[],
+  capex[],
+  IRL_appliqué%,
+  incidents[]
+}
+
+### Objet Scénario
+Scénario {
+  id,
+  base_date,
+  nom,
+  horizon,
+  hypothèses_globales {
+    inflation,
+    IRL,
+    valorisation,
+    taux_actualisation
+  },
+  opérations[] {
+    achat_bien,
+    vente_bien { date, prix, frais%, calcul_PV = true },
+    refi_bien { date, type, nouveau_taux, nouvelle_durée, frais, IRA, cash_out }
+  },
+  overrides_par_bien
+}
+
+### Objet Entité
+Entité {
+  id,
+  type: Perso | SCI_IS,
+  associés[],
+  quote_parts
+}
+
+### Objet Portefeuille
+Portefeuille {
+  id,
+  ownerId,
+  entités[],
+  biens[],
+  scénarios[],
+  baseline_date,
+  partages[]
+}
+
+### Objet Référentiels
+Référentiels {
+  taux_IS,
+  IRL_history,
+  presets_amort,
+  frais_notaire%,
+  frais_cession%,
+  PV_barèmes {
+    IR,
+    PS,
+    surtaxe,
+    seuils
+  }
+}
+
+### Budget et écarts
+BudgetLigne {
+  id,
+  bienId,
+  poste,
+  période,
+  montant
+}
+
+ÉcartAggregate {
+  id,
+  bienId | portefeuilleId,
+  période,
+  poste,
+  budget,
+  réel,
+  écart,
+  écart_%
+}
+
+### Phase 2 (Rapprochement bancaire)
+CompteBancaire {
+  id,
+  iban | alias,
+  agrégateur_source,
+  consent_expires_at
+}
+
+TransactionBancaire {
+  id,
+  compteId,
+  date,
+  libellé,
+  montant,
+  devise,
+  catégorie_suggérée,
+  status_rapprochement
+}
+
+RègleRapprochement {
+  id,
+  pattern_libellé,
+  tolérance_jours,
+  tolérance_montant,
+  mapping_poste
+}
+
+-------------------------------------------------
+10) Tableaux & exports
+-------------------------------------------------
+### Table des flux annuels par bien
+- Revenus
+- Charges
+- EBITDA
+- Amortissements
+- Résultat fiscal
+- Impôts/IS
+- Service dette
+- Cash-flow net
+- Capital restant dû
+- Valeur de marché
+
+### Consolidation portefeuille
+- Agrégés par année et par entité
+- Valeur totale
+- Dette totale
+- Patrimoine net
+- LTV global
+- DSCR global
+- TRI/VAN
+
+### Annexes
+- Échéanciers de prêts (détail par mensualité)
+- Amortissements par composant
+- Hypothèses paramétrées (inflation, IRL, taux actualisation)
+- Paramétrage fiscal (barèmes IS, PV, abattements)

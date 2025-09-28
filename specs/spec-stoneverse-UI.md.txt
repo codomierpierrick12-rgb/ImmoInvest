@@ -1,0 +1,184 @@
+========================================
+Stoneverse - Spécifications UI & UX
+========================================
+
+Fichier : 03-ui-ux.txt
+Contenu : Contexte & objectifs UI, Périmètre, Navigation, Design system, Templates d’écrans, Formulaires, Tables, Graphes, États, Accessibilité, Responsivité, Raccourcis & micro-interactions, Microcopy, Critères d’acceptation
+
+-------------------------------------------------
+1) Contexte & objectifs UI
+-------------------------------------------------
+Concevoir une interface rapide, compréhensible et orientée décision pour :
+1. Le suivi en Réel d’un portefeuille multibiens (LMNP, SCI IS).
+2. La simulation What-if (achat, vente, refinancement) avec impact global immédiat (LTV, DSCR, CF, TRI/VAN).
+3. La comparaison de scénarios.
+
+Focus : productivité (moins de saisies, chemins courts), lisibilité numérique, et accès mobile.
+
+-------------------------------------------------
+2) Périmètre UI
+-------------------------------------------------
+- Navigation et templates d’écrans.
+- Design system (tokens, composants, graphes).
+- Spécification des champs/colonnes clés.
+- États (loading/empty/error).
+- Accessibilité, responsivité.
+- Micro-interactions (feedback, raccourcis, animations discrètes).
+
+-------------------------------------------------
+3) Architecture de navigation
+-------------------------------------------------
+- **Sidebar persistante** : Dashboard, Biens (Liste, Détail), Scénarios (Liste, Détail, Comparateur), Budgets & Écarts, Projection financière, Référentiels (Admin), Paramètres.
+- **Topbar** : sélecteur d’Entité (Perso / SCI IS), sélecteur de période (année/mois), recherche globale, notifications/alertes.
+
+-------------------------------------------------
+4) Design system
+-------------------------------------------------
+### Tokens
+- Couleurs :
+  --primary #2563EB (bleu), --primary-foreground #FFFFFF
+  --muted #F1F5F9, --border #E2E8F0, --ring #93C5FD
+  États : --success #16A34A, --warning #F59E0B, --danger #DC2626, --info #0EA5E9
+- Charts palette : bleu, indigo, teal, amber, purple, rose.
+- Typo : Inter (texte), tabular nums pour chiffres ; tailles 12, 14, 16, 18, 20, 24, 32, 40 ; line-height 1.4–1.6.
+- Espacements : échelle 4px (4, 8, 12, 16, 24, 32, 40).
+- Rayons : 16px (cards/buttons), 12px (inputs).
+- Ombres : xs/sm/md/lg ; cartes dashboard = md douce.
+
+### Librairie & composants
+- shadcn/ui : Card, Button, Input, Select, Combobox, DatePicker, Tabs, Table, Dialog, Sheet, Drawer, Tooltip, Toast, Skeleton, Progress, Badge, Toggle, DropdownMenu, Separator.
+- Icônes : lucide-react.
+- Charts : Recharts (LineChart, AreaChart, BarChart, Composed, Pie minimal).
+- Animations : Framer Motion (fade/slide 150–200ms, spring léger).
+
+-------------------------------------------------
+5) Templates d’écrans
+-------------------------------------------------
+### 5.1 Dashboard Portefeuille
+- Header : filtres (Entité, Période, Horizon 5–30 ans, Mode: Réel / What-if / Réel+What-if).
+- KPI cards (6 max) : Valeur marché, Dette, Patrimoine net, LTV, DSCR, CF net d’impôt (YTD).
+- Graphes :
+  - Ligne empilée Cashflows (loyers, charges, impôts, dette) sur 12–36 mois.
+  - Colonne DSCR mensuel avec seuil 1.2 (ligne guide, badges rouge/ambre/vert).
+  - Ligne Patrimoine net vs Dette sur horizon.
+- Table Biens (top 10 par poids) : Nom, Entité, Valeur, CRD, LTV, CF mensuel, DSCR, Alertes.
+
+### 5.2 Biens
+- Liste : toolbar (Recherche, Filtres: entité, type, statut ; Actions: Nouveau, Export).
+  - Colonnes : Nom, Entité, Loyer net/mois, Vacance 12m, Charges 12m, CRD, LTV, DSCR, CF 12m, Dernière MAJ.
+- Détail Bien (onglets) :
+  - Synthèse (KPI, minigraph CF, DSCR, LTV, Alertes).
+  - Hypothèses (acquisition, loyers/IRL, charges, capex plan, régime fiscal).
+  - Prêts (échéancier, refi bouton, IRA calculée).
+  - Flux & Résultats (mensuel/annuel, export XLS).
+  - Fiscalité (LMNP ou SCI IS : résultat, amortissements, IS/impôt, PV si cession planifiée).
+  - Journal (événements du bien).
+  - Documents (contrats, quittances – stockage simple).
+
+### 5.3 Journal mensuel
+- Toolbar : Sélecteurs période/bien, Import CSV (Phase 2), Ajout rapide (Loyer, Charge, CAPEX).
+- Table Événements : Date, Type, Montant, Bien, Catégorie, Statut (brouillon/validé), Pièce jointe.
+- Footer : Totaux mois (loyers, charges, impôts), CF du mois, DSCR du mois.
+
+### 5.4 Scénarios
+- Liste : cartes avec métriques clés (TRI, VAN, CF cumulé, LTV/DSCR min), actions (Dupliquer, Comparer, Export).
+- Détail Scénario :
+  - Bandeau Hypothèses globales (inflation, IRL, valorisation, taux d’actualisation).
+  - Panneau Opérations (stepper) : Achat, Vente, Refinancement (chaque op en Sheet latéral).
+  - Résultats : KPI + graphs (Cashflows, LTV, DSCR, TRI/VAN).
+  - Toggle Réel vs Réel+Scénario.
+  - Diff view (onglet) : deltas vs baseline (€/%, badges).
+
+### 5.5 Vente (What-if)
+- Sheet latéral : Prix, Frais %, Date, Décote, CRD auto, IRA (calcul + override), Régime fiscal (LMNP/SCI IS).
+- Afficher : Cash net vendeur et PV (IR/PS/surtaxe ou IS/VNC) en temps réel.
+
+### 5.6 Refinancement (What-if)
+- Sheet latéral : Type (renégo/rachat/rallongement/cashout), Nouveau taux/durée, Frais, Garanties, Cashout.
+- Comparateur avant/après : mensualité, coût total, VAN différentielle, DSCR.
+
+### 5.7 Comparateur
+- Header sticky : sélection jusqu’à 5 scénarios, critère de tri (TRI, VAN@r, CF cumulé, LTV cible, DSCR min).
+- Grille cartes + sparklines et KPIs.
+- Table diff des hypothèses et résultats.
+- Graph multiséries.
+
+### 5.8 Budgets & Écarts
+- Heatmap par bien/poste/mois (rouge/ambre/vert).
+- Table détaillée.
+- Actions : « Ajuster budget », « Créer prévision ».
+
+### 5.9 Rapprochement (Phase 2)
+- Deux panneaux : Transactions (gauche), Événements (droite).
+- Drag-to-match, tolérance affichée.
+- Filtres par compte/bien/période.
+
+### 5.10 Référentiels (Admin)
+- Tables éditables : Barèmes IS, IRL, Inflation, PV (IR/PS/surtaxe), Durées amort., Frais notaire/cession.
+
+-------------------------------------------------
+6) Formulaires & validations
+-------------------------------------------------
+- Wizard Reprise Bien (4 étapes) avec miniaperçu KPI.
+- Règles : champs requis, formats numériques, garde-fous (taux > 30%, vacance > 50%).
+- Confirmations destructives (vente, refi cashout).
+- Autosave toutes 2 s, indicateur « Tous les changements enregistrés ».
+
+-------------------------------------------------
+7) Tables – spécifications clés
+-------------------------------------------------
+- Fonctions : tri, filtres, recherche, colonnes visibles, largeur auto, sticky header, pagination (25/50/100), export XLS/CSV.
+- Colonnes numériques alignées à droite, format € et % cohérents, tooltips de formule.
+
+-------------------------------------------------
+8) Graphes – spécifications clés
+-------------------------------------------------
+- Légende interactive, surbrillance série au survol.
+- Sélecteur période (12/24/36 mois, horizon 5/10/20 ans).
+- Benchmarks (seuil DSCR=1.2, LTV cible).
+- Valeurs arrondies (k, M) avec tooltip valeurs exactes.
+
+-------------------------------------------------
+9) États & feedback
+-------------------------------------------------
+- Empty : messages actionnables (Créer un bien / Importer un CSV / Lancer un scénario).
+- Loading : Skeletons (cards, tables, chart placeholders).
+- Erreur : toasts + inline error, CTA « Réessayer ».
+- Avertissements : DSCR < 1.2, LTV > 85%, budgets dépassés.
+
+-------------------------------------------------
+10) Accessibilité & i18n
+-------------------------------------------------
+- Contraste AA, focus visibles, navigation clavier (Tab/Shift+Tab), labellisation ARIA.
+- Formats fr-FR (€, décimales, date DD/MM/YYYY), séparateur de milliers espace fine.
+- Texte adaptable 200% sans cassure.
+
+-------------------------------------------------
+11) Responsivité & performance
+-------------------------------------------------
+- Breakpoints : ≥1440 (desktop large), 1280 (desktop), 1024 (laptop), 768 (tablet), 360–480 (mobile).
+- Mobile : drawer navigation, cards empilées, tableaux en liste.
+- Virtualisation des tables (>1 000 lignes).
+- Réseaux lents : lazy loading des images.
+
+-------------------------------------------------
+12) Micro-interactions & raccourcis
+-------------------------------------------------
+- Cmd/Ctrl+K : commande rapide (Créer bien, Nouveau scénario, Aller à…).
+- S : sauvegarder ; / : rechercher ; G+D/B/S/J : aller Dashboard/Biens/Scénarios/Journal.
+- Animation légère lors du changement de métrique (graphs) et ajout d’opération (scenario timeline).
+
+-------------------------------------------------
+13) Microcopy
+-------------------------------------------------
+- Avertissement (vente/refi) : « Simulation indicative – frais et fiscalités réels peuvent varier. »
+- Tooltips formules : « DSCR = CF opérationnel / Service de la dette » ; « Cash net vendeur = Prix(1−frais) − CRD − IRA − Impôts ».
+- Labels cohérents : LTV, DSCR, VAN@r, TRI (equity/projet).
+
+-------------------------------------------------
+14) Critères d’acceptation UI (extraits)
+-------------------------------------------------
+- Dashboard : Given 5 biens, When Mode = Réel+What-if, Then KPI et graphes se mettent à jour <300 ms.
+- Vente : Given saisie Prix/Frais/Date, When modification Régime fiscal, Then PV et Cash net recalculés en temps réel.
+- Refi : Given cashout activé, When LTV >85%, Then alerte critique + blocage si politique activée.
+- Comparateur : Given 3 scénarios, When tri = TRI, Then le meilleur est badgé et affiché en premier.

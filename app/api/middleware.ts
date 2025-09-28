@@ -120,7 +120,7 @@ export async function checkPropertyAccess(
     return {
       hasAccess: true,
       property,
-      portfolio: property.portfolios,
+      portfolio: (property as any).portfolios,
     };
   } catch (error) {
     console.error('Property access check error:', error);

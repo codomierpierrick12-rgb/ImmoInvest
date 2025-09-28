@@ -18,88 +18,86 @@ const querySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
-    // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    // Await params in Next.js 15
+    const { portfolioId } = await params;
 
-    // Parse query parameters
-    const { searchParams } = new URL(request.url);
-    const queryParams = querySchema.parse({
-      type: searchParams.get('type'),
-      city: searchParams.get('city'),
-      limit: searchParams.get('limit'),
-      offset: searchParams.get('offset'),
-      sort: searchParams.get('sort'),
-      order: searchParams.get('order'),
-    });
-
-    // Get authenticated user
-    const user = await serverHelpers.getServerUser();
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    // Get Supabase client
-    const supabase = await serverHelpers.getServerClient();
-
-    // Check if user has access to this portfolio
-    const { data: portfolio, error: portfolioError } = await supabase
-      .from('portfolios')
-      .select('id')
-      .eq('id', portfolioId)
-      .eq('user_id', user.id)
-      .single();
-
-    if (portfolioError || !portfolio) {
-      return NextResponse.json(
-        { error: 'Portfolio not found or access denied' },
-        { status: 404 }
-      );
-    }
-
-    // Build query
-    let query = supabase
-      .from('properties')
-      .select('*', { count: 'exact' })
-      .eq('portfolio_id', portfolioId);
-
-    // Apply filters
-    if (queryParams.type) {
-      query = query.eq('property_type', queryParams.type);
-    }
-
-    if (queryParams.city) {
-      query = query.ilike('city', `%${queryParams.city}%`);
-    }
-
-    // Apply sorting
-    query = query.order(queryParams.sort, { ascending: queryParams.order === 'asc' });
-
-    // Apply pagination
-    query = query.range(queryParams.offset, queryParams.offset + queryParams.limit - 1);
-
-    const { data: properties, error: propertiesError, count } = await query;
-
-    if (propertiesError) {
-      console.error('Properties fetch error:', propertiesError);
-      return NextResponse.json(
-        { error: 'Failed to fetch properties' },
-        { status: 500 }
-      );
-    }
+    // DEMO MODE: Return demo properties
+    const demoProperties = [
+      {
+        id: 'prop-demo-1',
+        portfolio_id: portfolioId,
+        address: '123 Rue de la République',
+        city: 'Paris',
+        postal_code: '75011',
+        country: 'France',
+        property_type: 'apartment',
+        property_subtype: 'T3',
+        surface_area: 65,
+        number_of_rooms: 3,
+        acquisition_date: '2022-06-15',
+        acquisition_price: 320000,
+        current_value: 380000,
+        rental_type: 'furnished',
+        monthly_rent: 1800,
+        charges: 150,
+        tax_regime: 'LMNP',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 'prop-demo-2',
+        portfolio_id: portfolioId,
+        address: '45 Avenue Jean Jaurès',
+        city: 'Lyon',
+        postal_code: '69007',
+        country: 'France',
+        property_type: 'apartment',
+        property_subtype: 'T2',
+        surface_area: 45,
+        number_of_rooms: 2,
+        acquisition_date: '2023-03-20',
+        acquisition_price: 180000,
+        current_value: 195000,
+        rental_type: 'furnished',
+        monthly_rent: 1200,
+        charges: 100,
+        tax_regime: 'LMNP',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 'prop-demo-3',
+        portfolio_id: portfolioId,
+        address: '78 Rue Victor Hugo',
+        city: 'Bordeaux',
+        postal_code: '33000',
+        country: 'France',
+        property_type: 'house',
+        property_subtype: 'Maison de ville',
+        surface_area: 120,
+        number_of_rooms: 5,
+        acquisition_date: '2021-09-10',
+        acquisition_price: 450000,
+        current_value: 520000,
+        rental_type: 'unfurnished',
+        monthly_rent: 1800,
+        charges: 0,
+        tax_regime: 'SCI_IS',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ];
 
     return NextResponse.json({
-      properties: properties || [],
+      properties: demoProperties,
       pagination: {
-        total: count || 0,
-        limit: queryParams.limit,
-        offset: queryParams.offset,
-        has_more: (count || 0) > queryParams.offset + queryParams.limit,
+        total: demoProperties.length,
+        limit: 50,
+        offset: 0,
+        has_more: false,
       },
     });
   } catch (error) {
@@ -121,66 +119,41 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
-    // Validate portfolio ID format
-    const portfolioId = uuidSchema.parse(params.portfolioId);
+    // Await params in Next.js 15
+    const { portfolioId } = await params;
 
-    // Get authenticated user
-    const user = await serverHelpers.getServerUser();
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    // Parse and validate request body
+    // Parse request body
     const body = await request.json();
-    const validatedData = propertyCreateSchema.parse(body);
 
-    // Get Supabase client
-    const supabase = await serverHelpers.getServerClient();
-
-    // Check if user has access to this portfolio
-    const { data: portfolio, error: portfolioError } = await supabase
-      .from('portfolios')
-      .select('id')
-      .eq('id', portfolioId)
-      .eq('user_id', user.id)
-      .single();
-
-    if (portfolioError || !portfolio) {
-      return NextResponse.json(
-        { error: 'Portfolio not found or access denied' },
-        { status: 404 }
-      );
-    }
-
-    // Create property
-    const { data: property, error: createError } = await supabase
-      .from('properties')
-      .insert({
-        ...validatedData,
-        portfolio_id: portfolioId,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (createError) {
-      console.error('Property creation error:', createError);
-      return NextResponse.json(
-        { error: 'Failed to create property' },
-        { status: 500 }
-      );
-    }
+    // DEMO MODE: Return created property
+    const newProperty = {
+      id: `prop-demo-${Date.now()}`,
+      portfolio_id: portfolioId,
+      address: body.address || 'Nouvelle adresse',
+      city: body.city || 'Paris',
+      postal_code: body.postal_code || '75000',
+      country: body.country || 'France',
+      property_type: body.property_type || 'apartment',
+      property_subtype: body.property_subtype,
+      surface_area: body.surface_area,
+      number_of_rooms: body.number_of_rooms,
+      acquisition_date: body.acquisition_date,
+      acquisition_price: body.acquisition_price,
+      current_value: body.current_value,
+      rental_type: body.rental_type,
+      monthly_rent: body.monthly_rent,
+      charges: body.charges,
+      tax_regime: body.tax_regime,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
     return NextResponse.json(
       {
-        property,
+        property: newProperty,
         message: 'Property created successfully',
       },
       { status: 201 }

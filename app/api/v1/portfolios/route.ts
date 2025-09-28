@@ -6,68 +6,22 @@ import { z } from 'zod';
 // GET /api/v1/portfolios - List user portfolios
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
-    const isAuthenticated = await serverHelpers.isServerAuthenticated();
-    if (!isAuthenticated) {
-      return NextResponse.json(
-        {
-          code: 'UNAUTHORIZED',
-          message: 'Authentication required',
-        },
-        { status: 401 }
-      );
-    }
-
-    const user = await serverHelpers.getServerUser();
-    if (!user) {
-      return NextResponse.json(
-        {
-          code: 'UNAUTHORIZED',
-          message: 'User not found',
-        },
-        { status: 401 }
-      );
-    }
-
-    // Parse query parameters
-    const { searchParams } = new URL(request.url);
-    const queryParams = portfolioQuerySchema.parse({
-      include_shared: searchParams.get('include_shared') || 'true',
-    });
-
-    const supabase = createServerClient();
-
-    // Build query based on parameters
-    let query = supabase
-      .from('portfolios')
-      .select('*')
-      .eq('user_id', user.id);
-
-    // If including shared portfolios, add them to the query
-    if (queryParams.include_shared) {
-      // For now, just get owned portfolios
-      // Shared portfolios would require a more complex query with RLS
-      query = query.order('created_at', { ascending: false });
-    } else {
-      query = query.order('created_at', { ascending: false });
-    }
-
-    const { data: portfolios, error } = await query;
-
-    if (error) {
-      console.error('Database error:', error);
-      return NextResponse.json(
-        {
-          code: 'INTERNAL_ERROR',
-          message: 'Failed to fetch portfolios',
-        },
-        { status: 500 }
-      );
-    }
+    // DEMO MODE: Return demo portfolios
+    const demoPortfolios = [
+      {
+        id: 'portfolio-demo-1',
+        name: 'Mon Portefeuille Immobilier',
+        base_currency: 'EUR',
+        baseline_date: '2024-01-01',
+        user_id: 'demo-user-123',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+    ];
 
     return NextResponse.json({
-      portfolios: portfolios || [],
-      total: portfolios?.length || 0,
+      portfolios: demoPortfolios,
+      total: demoPortfolios.length,
     });
   } catch (error) {
     console.error('API error:', error);

@@ -1,0 +1,67 @@
+========================================
+Stoneverse - Index des Spécifications
+========================================
+
+Fichier : 00-index.txt
+Contenu : Sommaire global des spécifications, avec références aux fichiers .txt associés
+
+-------------------------------------------------
+Liste des fichiers
+-------------------------------------------------
+
+1) 01-core-fonctionnel.txt
+   - Contexte & objectifs
+   - Périmètre (Phase 1 & 2)
+   - Acteurs & rôles
+   - Parcours utilisateurs (Onboarding, Journal mensuel, What-if achat/vente/refi, Comparateur, Budget & écarts, Export & partage)
+   - Fonctionnalités principales
+   - Règles de gestion (baseline, revenus/vacance, charges, fiscalité, financement, valorisation, indicateurs, plus-values, refinancement, budgets & écarts)
+   - Cas particuliers & erreurs
+   - Contraintes techniques & légales
+
+2) 02-donnees-exports.txt
+   - Modèle de données (Bien, Prêt, ÉvénementMensuel, Scénario, Entité, Portefeuille, Référentiels, BudgetLigne, ÉcartAggregate, Comptes/Transactions/Règles pour Phase 2)
+   - Tableaux & exports
+   - Annexes (échéanciers, amortissements par composant, hypothèses globales, paramétrages fiscaux)
+
+3) 03-ui-ux.txt
+   - Contexte & objectifs UI
+   - Périmètre UI
+   - Navigation (sidebar, topbar)
+   - Design system (tokens, composants, charts, animations)
+   - Templates d’écrans (Dashboard, Biens, Journal, Scénarios, Vente, Refinancement, Comparateur, Budgets & écarts, Rapprochement, Référentiels Admin)
+   - Formulaires & validations
+   - Tables (fonctions, formats, tooltips)
+   - Graphes (benchmarks, sélecteurs)
+   - États (empty, loading, erreurs, avertissements)
+   - Accessibilité & i18n
+   - Responsivité & performance
+   - Micro-interactions & raccourcis
+   - Microcopy
+   - Critères d’acceptation UI
+
+4) 04-branding-tooltips.txt
+   - Branding (contexte, objectifs, baselines, elevator pitch, messaging pillars)
+   - Identité visuelle (couleurs, typo, icono)
+   - Logo (brief créatif, variantes, livrables, do/don’t)
+   - Microcopy de marque
+   - Intégration produit (UI, exports, tooltips)
+   - Critères d’acceptation branding
+   - Tooltips KPI (LTV, DSCR, CRD — Phase 1 ; VAN@r, TRI, Cash net vendeur — Phase 2 option)
+   - Fonctionnalités, contenu, règles de gestion, accessibilité, contraintes techniques
+   - Critères d’acceptation tooltips
+
+-------------------------------------------------
+Organisation recommandée
+-------------------------------------------------
+- Lire en priorité **01-core-fonctionnel.txt** pour comprendre le besoin produit.  
+- Utiliser **02-donnees-exports.txt** pour conception technique & reporting.  
+- Référer à **03-ui-ux.txt** pour design & développement front-end.  
+- Consulter **04-branding-tooltips.txt** pour cohérence d’identité et contenus utilisateurs.
+
+-------------------------------------------------
+Remarques
+-------------------------------------------------
+- Chaque fichier est autonome mais complémentaire.
+- Les dépendances sont explicitement notées (ex : seuils d’alerte paramétrables → référentiels Admin).
+- Découpage pensé pour être navigable facilement (par équipes produit, tech, design, marketing).

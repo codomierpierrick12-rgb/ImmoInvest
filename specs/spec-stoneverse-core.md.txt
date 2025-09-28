@@ -1,0 +1,186 @@
+========================================
+Stoneverse - Spécifications Fonctionnelles
+========================================
+
+Fichier : 01-core-fonctionnel.txt
+Contenu : Contexte, Périmètre, Acteurs, Parcours utilisateurs, Fonctionnalités, Règles de gestion, Cas particuliers, Contraintes techniques & légales
+
+-------------------------------------------------
+1) Contexte et objectif
+-------------------------------------------------
+L’application vise à fournir un pilotage patrimonial immobilier multi-biens, intégrant à la fois (i) le suivi en production des biens existants (réels) et (ii) un simulateur de scénarios pour projeter l’impact d’acquisitions/cessions sur l’ensemble du portefeuille.
+
+Le produit doit permettre :
+- La modélisation et la mise à jour continue des biens détenus (prix d’achat, prêts, loyers, charges, incidents, capex, indexations, vacance).
+- La visualisation consolidée du patrimoine (valeur, dette, LTV, DSCR, cash-flows, fiscalité) au réel et en projection.
+- La simulation d’achats/ventes et la comparaison d’options, avec mesure de l’impact global sur le portefeuille.
+- La prise en compte de plusieurs structures fiscales (LMNP, SCI à l’IS) au niveau bien/entité.
+- Des exports auditables pour partage et décision.
+
+-------------------------------------------------
+2) Périmètre
+-------------------------------------------------
+### Inclus (Phase 1)
+- Suivi opérationnel multi-biens (mode Réel) : enregistrement des hypothèses et des événements mensuels (loyers encaissés, vacance, charges, capex, indexations IRL) et recalcul des KPI.
+- Baseline portefeuille à une date de référence (T0), avec reprise d’historique simplifiée (soldes prêts, valeurs, loyers actuels).
+- Simulateur de scénarios (mode What-if) : achats, ventes et refinancements (renégociation/rallongement, rachat, cashout), et comparaison jusqu’à 5 scénarios.
+- Calcul détaillé des plus-values de cession :
+  - LMNP (non professionnel) — régime des particuliers : plus-value immobilière privée avec abattements par durée (barèmes paramétrés), sans réintégration des amortissements.
+  - SCI à l’IS — plus-value professionnelle : différence Prix net – Valeur nette comptable (VNC), réintégration des amortissements, imposition à l’IS (barèmes paramétrés).
+- Vue consolidée : patrimoine net, LTV, DSCR, cashflow net d’impôt, TRI/VAN, impôts/IS, par bien, par entité (Perso/SCI IS) et global.
+- Impact de cession : cash net vendeur (frais, IRA, remboursement dette) et effets portfolio (LTV, DSCR, CF, impôts), PV calculée selon régime.
+- Budgets & écarts : définition d’un budget annuel/mensuel (loyers, charges, capex) et suivi des écarts Réel vs Budget (seuils d’alerte, rolling forecast).
+- Exports PDF/Excel, gestion utilisateurs et partages.
+
+-------------------------------------------------
+3) Acteurs et rôles
+-------------------------------------------------
+- **Investisseur particulier (Utilisateur final)** : crée des biens, scénarios, compare, exporte.
+- **Admin** : gestion des référentiels (taux, tranches IS, paramètres par défaut), gestion RGPD et sauvegardes.
+- **Droits (principes)** :
+  - Chaque portefeuille appartient à un « propriétaire ».
+  - Partage possible avec droits : Lecture, Commentaire, Édition.
+  - Un Pro peut créer des « dossiers clients » regroupant biens et scénarios.
+
+-------------------------------------------------
+4) Parcours utilisateurs détaillés
+-------------------------------------------------
+### 4.1 Onboarding & reprise des biens existants (mode Réel)
+- L’utilisateur crée son Portefeuille et sa/leurs Entité(s) (Perso, SCI IS).
+- Wizard Reprise par bien : informations d’acquisition, soldes de prêts au T0, loyer courant et indexation, charges courantes, taxe foncière, capex planifiés, vacance historique (optionnelle).
+- Définition de la date de référence T0 (début du suivi) et des valeurs de marché (estimation manuelle) pour calcul LTV.
+- Enregistrement et calcul immédiat des KPI Réel au T0.
+
+### 4.2 Saisie continue (Journal mensuel)
+- À chaque période, l’utilisateur saisit/importe (manuel Phase 1) : loyers encaissés, vacance (jours/mois), charges payées, capex, révisions IRL, incidents.
+- Le système recalcule : cash-flow mensuel, DSCR, mise à jour des agrégats annuels, projections glissantes.
+- Alerte en cas d’écart vs prévision > seuil (paramétrable).
+
+### 4.3 Création d’un scénario What-if (achat)
+- Depuis le portefeuille Réel, l’utilisateur crée un scénario basé sur la baseline T0 (ou Tn).
+- Ajoute un ou plusieurs nouveaux biens avec options de financement, fiscalité, hypothèses de marché ; déclenche le calcul.
+- Compare le portefeuille Réel vs Réel + Scénario sur 5–30 ans : cash-flow, LTV, TRI, VAN, impôts.
+
+### 4.4 Scénario What-if (vente)
+- Sélection d’un bien existant → action “Simuler vente” (date de cession, frais, décote éventuelle, remboursement anticipé prêt, IRA).
+- Calcul du cash net vendeur, remboursement de la dette, impact sur patrimoine net, LTV, DSCR, cash-flow et fiscalité (PV selon régime).
+- Sauvegarde et comparaison avec d’autres options (vendre maintenant vs dans X ans).
+
+### 4.5 Scénario What-if (refinancement)
+- Depuis un bien, l’utilisateur clique “Refinancer” (renégociation, rachat externe, rallongement, cashout).
+- Saisie : type de refi, nouveau taux, nouvelle durée, frais de dossier, garanties, IRA calculée ou importée, montant de cashout éventuel.
+- Le moteur remplace l’échéancier initial à la date effective par le nouvel échéancier ; calcule le coût total et l’impact (DSCR, CF, LTV, TRI/VAN).
+- Sauvegarde comme opération de scénario (réversible) et comparaison avec status quo.
+
+### 4.6 Comparaison & décision
+- Tableau comparatif multiscénarios, critères de décision (TRI net, VAN, CF cumulé, LTV cible, DSCR minimal), mise en évidence du meilleur selon un objectif.
+
+### 4.7 Rapprochement bancaire (Phase 2)
+- Connexion d’un compte bancaire (API agrégateur) ou import CSV.
+- Mapping auto (règles) des écritures vers des Événements mensuels (loyers, charges, capex, intérêts, assurances).
+- Statuts de rapprochement : Apparié, Partiel, Non apparié, avec tolérance montant/date.
+- Validation en lot, exceptions et création d’événements manquants.
+
+### 4.8 Budget & écarts
+- Définition d’un budget annuel/mensuel par bien et par poste (loyers, charges, capex).
+- À la clôture mensuelle, calcul des écarts (montant, %) et alertes si dépassement de seuils.
+- Mise à jour d’un rolling forecast (projection fin d’année) et impact sur KPI portefeuille.
+
+### 4.9 Export & partage
+- PDF/Excel (hypothèses, échéanciers, flux réels, projections, PV, refi, écarts), partage sécurisé.
+
+-------------------------------------------------
+5) Fonctionnalités principales
+-------------------------------------------------
+- Mode Réel (Suivi) : journal mensuel, clôtures, agrégats, écarts vs budget, alertes ; mise à jour des soldes de prêts et intérêts payés.
+- Mode What-if (Simulation) : achats, ventes, refinancements, fiscalité LMNP/SCI IS, sensibilités, stress tests.
+- Consolidation & Reporting : vues portefeuille global/entité/bien ; KPI consolidés.
+- Fiscalité LMNP & SCI IS : charges, amortissements, IS, plus-values.
+- Budgets & écarts : suivi vs prévisionnel, seuils d’alerte, rolling forecast.
+- Productivité & UX : Wizards, duplication, presets, validations live, tags, recherche, historique, autosave.
+
+-------------------------------------------------
+6) Règles de gestion (Phase 1)
+-------------------------------------------------
+### 6.1 Baseline & périodes
+- Baseline T0 obligatoire par portefeuille.
+- Périodicité mensuelle, agrégation annuelle pour reporting.
+- Année incomplète : proratisation des revenus/charges.
+
+### 6.2 Revenus & vacance
+- Loyer encaissé = loyer contractuel × (1 − vacance%) × (1 − impayés%).
+- Indexation IRL appliquée à la date d’anniversaire du bail ou selon événement.
+
+### 6.3 Charges & CAPEX
+- Charges au mois de paiement.
+- CAPEX immobilisables ou passés en charges selon paramétrage.
+
+### 6.4 Amortissements & fiscalité
+- LMNP : base amortissable = (Prix + frais + travaux immobilisés + mobilier) − terrain (par défaut 10%, éditable).
+- Amortissements par composant, sans création de déficit BIC.
+- SCI IS : résultat = produits − charges − amortissements ; IS barème paramétré ; report déficits.
+
+### 6.5 Financement
+- Échéancier par prêt (amortissable/in fine), assurance, différé.
+- MAJ CRD et intérêts payés.
+- IRA : min(6 mois intérêts, 3% CRD).
+
+### 6.6 Valorisation & revente
+- Valeur marché = valeur T0 × ∏(1 + revalo%).
+- Cash net vendeur = Prix × (1 − frais%) − CRD − IRA.
+
+### 6.7 Indicateurs
+- TRI/VAN calculés sur flux.
+- DSCR = CF opérationnel / Service dette, alerte <1,2.
+- LTV = Dette / Valeur marché.
+
+### 6.8 Comparaison
+- Réel vs Réel+What-if vs scénarios, critères de tri, badge meilleur choix.
+
+### 6.9 Plus-values de cession
+- Paramètres : prix, frais, acquisition, travaux, durée détention, barèmes référentiels.
+- LMNP : PV privée avec abattements par durée (IR, PS), sans réintégration amortissements.
+- SCI IS : PV comptable = Prix net − VNC, intégrée au résultat imposable, IS barème.
+
+### 6.10 Refinancement
+- Types : renégociation, rachat, rallongement, cashout.
+- Date effective = remplacement échéancier.
+- Coûts : IRA, frais dossier/garantie.
+- Nouveau prêt : annuités/in fine, assurance, différé.
+- Cashout : flux positif investisseur, dette ↑, impact LTV/DSCR.
+- Comparaison avant/après (coût total, VAN, point mort).
+
+### 6.12 Budgets & écarts
+- Budget par bien/poste/mois, version initiale + révisée.
+- Écart = Réel − Budget (% et montant).
+- Rolling forecast mis à jour.
+
+-------------------------------------------------
+7) Cas particuliers & erreurs
+-------------------------------------------------
+- Baseline manquante : empêcher scénario.
+- Vente datée < T0 : bloquer.
+- Valeur terrain >30% : confirmation explicite.
+- Vacance >50% ou DSCR <1 : alerte critique.
+- Scénario vide ou identique baseline : avertissement.
+- Incohérence prêt (taux >30%, durée >40 ans) : blocage.
+- PV incohérente : bloquer et demander vérification.
+- Refi cashout dépassant LTV max : alerte, blocage si activé.
+- Loyer ou prix = 0 : bloquer validation.
+- Amortissement > base : empêcher.
+- Taux variable sans courbe : bloquer calcul.
+- Export >10 000 lignes : proposer découpage.
+
+-------------------------------------------------
+8) Contraintes techniques & légales
+-------------------------------------------------
+### Techniques
+- Web app SPA (React/Next.js), API Node.js/TypeScript.
+- Moteur de calcul stateless, versionné.
+- Stockage en centimes, périodicité mensuelle, agrégats annuels.
+- Performance : 10 biens recalcul <500 ms ; scénario 10 biens/30 ans <1,5 s ; comparaison 5 scénarios <2,5 s.
+- Observabilité : traces par période/scénario, idempotence.
+
+### Légal & conformité
+- Disclaimer : “information générale, pas de conseil”.
+- Documentation des référentiels (IS, IRL, inflation, barèmes PV/surtaxe) avec datation.

@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { Property } from '@/lib/types/database';
-import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import { cn } from '@/lib/utils/cn';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Edit, Trash2, Eye } from 'lucide-react';
 
 interface PropertyListProps {
   portfolioId: string;
   onPropertySelect?: (property: Property) => void;
   onAddProperty?: () => void;
+  onEditProperty?: (property: Property) => void;
+  onDeleteProperty?: (property: Property) => void;
   className?: string;
 }
 
@@ -17,6 +20,8 @@ export default function PropertyList({
   portfolioId,
   onPropertySelect,
   onAddProperty,
+  onEditProperty,
+  onDeleteProperty,
   className,
 }: PropertyListProps) {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -49,6 +54,35 @@ export default function PropertyList({
   const handlePropertyClick = (property: Property) => {
     setSelectedProperty(property.id);
     onPropertySelect?.(property);
+  };
+
+  const handleDeleteProperty = async (property: Property, event: React.MouseEvent) => {
+    event.stopPropagation();
+
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer le bien "${property.address}" ?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/portfolios/${portfolioId}/properties/${property.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setProperties(prev => prev.filter(p => p.id !== property.id));
+        onDeleteProperty?.(property);
+      } else {
+        throw new Error('Failed to delete property');
+      }
+    } catch (error) {
+      console.error('Error deleting property:', error);
+      alert('Erreur lors de la suppression du bien');
+    }
+  };
+
+  const handleEditProperty = (property: Property, event: React.MouseEvent) => {
+    event.stopPropagation();
+    onEditProperty?.(property);
   };
 
   const formatCurrency = (amount: number) => {
@@ -142,12 +176,49 @@ export default function PropertyList({
             onClick={() => handlePropertyClick(property)}
           >
             <CardHeader>
-              <CardTitle className="text-base">
-                {property.address}
-              </CardTitle>
-              <div className="text-sm text-gray-600">
-                {property.city}
-                {property.postal_code && ` • ${property.postal_code}`}
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <CardTitle className="text-base">
+                    {property.address}
+                  </CardTitle>
+                  <div className="text-sm text-gray-600">
+                    {property.city}
+                    {property.postal_code && ` • ${property.postal_code}`}
+                  </div>
+                </div>
+                <div className="flex gap-1 ml-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => handlePropertyClick(property)}
+                    title="Voir les détails"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  {onEditProperty && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => handleEditProperty(property, e)}
+                      title="Modifier"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {onDeleteProperty && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={(e) => handleDeleteProperty(property, e)}
+                      title="Supprimer"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
 

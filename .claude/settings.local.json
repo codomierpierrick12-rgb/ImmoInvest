@@ -7,7 +7,17 @@
       "Bash(npm run test:calculations:*)",
       "Bash(npm install)",
       "Bash(npm install:*)",
-      "Bash(npm run type-check:*)"
+      "Bash(npm run type-check:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "WebSearch",
+      "WebFetch(domain:simloc.fr)",
+      "Bash(pkill:*)",
+      "Bash(npx:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []
